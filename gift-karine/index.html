@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<script type="text/javascript">
+  // This is a CodeSandbox injection script that's used to
+  // add navigation and inspector functionality to the preview
+  (function () {
+    // 1) Get the <script> tag that's currently running:
+    var me = document.currentScript;
+
+    // 2) Create the blocking‐style <script> to load:
+    var script = document.createElement("script");
+    script.src = "https://codesandbox.io/p/preview-protocol.js";
+
+    // By default a dynamically‐inserted <script> is async=true.
+    // Turn async off to make it behave like a normal blocking <script>:
+    script.async = false;
+    // (Do NOT set defer.)
+
+    // 3) Insert it immediately after the current <script>:
+    me.parentNode.insertBefore(script, me);
+  })();
+
+  const isIFramePreview = window.top !== window.self;
+
+  // Only run this script in editor context
+  if (isIFramePreview) {
+    // This script is used to enable Chrome DevTools functionality
+    (function () {
+      var script = document.createElement("script");
+      script.src =
+        "https://codesandbox.io/p/chrome-devtool/protocol/index.js";
+
+      script.onload = () => {
+        const devtoolProtocol = window.chobitsu;
+        if (devtoolProtocol) {
+          window.addEventListener("message", (event) => {
+            const { type, data } = event.data;
+
+            if (type === "FROM_DEVTOOL") {
+              devtoolProtocol.sendRawMessage(data);
+            }
+          });
+
+          devtoolProtocol.setOnMessage((data) => {
+            if (data.includes('"id":"tmp')) {
+              return;
+            }
+
+            window.parent.postMessage({ type: "TO_DEVTOOL", data }, "*");
+          });
+
+          devtoolProtocol.sendRawMessage(
+            `{"id":5,"method":"Runtime.enable","params":{}}`
+          );
+        }        
+      }
+
+      (document.head || document.documentElement).prepend(script);
+    })();
+  }
+
+  if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ === "undefined") {
+    let nextID = 0;
+    let hook = (__REACT_DEVTOOLS_GLOBAL_HOOK__ = {
+      renderers: new Map(),
+      supportsFiber: true,
+      inject: (renderer) => {
+        const id = nextID++;
+        hook.renderers.set(id, renderer);
+        return id;
+      },
+      onScheduleFiberRoot() {},
+      onCommitFiberRoot() {},
+      onCommitFiberUnmount() {},
+    });
+  }
+
+  document.currentScript.remove();
+</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Para Karine — 5 meses de nós</title>
+  <meta name="description" content="Uma carta digital animada para celebrar nossos 5 meses. Corações roxos, palavras sinceras e uma trilha especial." />
+  <meta name="theme-color" content="#0B0B0F" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <meta property="og:title" content="Para Karine — 5 meses de nós" />
+  <meta property="og:description" content="Uma carta digital animada para celebrar nossos 5 meses. Corações roxos, palavras sinceras e uma trilha especial." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="" />
+  <meta property="og:image" content="assets/icons/favicon.svg" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Para Karine — 5 meses de nós" />
+  <meta name="twitter:description" content="Uma carta digital animada para celebrar nossos 5 meses. Corações roxos, palavras sinceras e uma trilha especial." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <noscript>Ative o JavaScript para ver a animação e reproduzir a música.</noscript>
+
+  <div id="intro" class="intro" role="dialog" aria-labelledby="intro-title" aria-modal="true">
+    <div class="intro-inner">
+      <h1 id="intro-title" class="title cursive">Karine, meu amor</h1>
+      <p class="subtitle">Toque em “Começar” para ouvir a música e abrir a carta.</p>
+      <button id="startBtn" class="btn primary" aria-controls="letter">Começar</button>
+      <p id="autoplayHint" class="hint" aria-live="polite" hidden>Seu navegador bloqueou a reprodução. Toque novamente para iniciar o áudio.</p>
+    </div>
+  </div>
+
+  <main id="letter" class="letter" hidden>
+    <div id="hearts" aria-hidden="true"></div>
+    <section class="content" tabindex="-1">
+      <h1 class="title cursive">Karine, meu amor</h1>
+      <div class="text">
+        <div id="typed" class="typed" aria-label="Carta com efeito de digitação"></div>
+        <button id="showAllBtn" class="btn ghost small">Mostrar tudo</button>
+      </div>
+      <footer class="footer">
+        <p class="date">29 de agosto de 2025</p>
+        <p class="signature">Com todo meu amor do seu querido namorado Wesley</p>
+      </footer>
+    </section>
+  </main>
+
+  <div id="controls" class="controls" aria-label="Controles de reprodução e animação">
+    <button id="playPauseBtn" class="ctrl" aria-pressed="false" aria-label="Tocar música">▶️</button>
+    <button id="loopBtn" class="ctrl" aria-pressed="false" aria-label="Ativar loop">⟲</button>
+    <button id="motionBtn" class="ctrl" aria-pressed="false" aria-label="Reduzir animação">⏸️✨</button>
+    <div id="audioStatus" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
